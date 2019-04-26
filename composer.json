@@ -1,0 +1,37 @@
+{
+    "name": "halberstadt.info/array2xml",
+    "description": "Description of project Array2XML.",
+    "authors": [
+        {
+            "name": "René Halberstadt",
+            "email": "rene@halberstadt.info",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Halberstadt\\Array2XML\\": "src/"
+        },
+        "files": [
+        ],
+        "classmap": [   
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HalberstadtTest\\Array2XML\\": "test/"
+        },
+        "files": [
+        ],
+        "classmap": [
+            []
+        ]
+    },
+    "config": {
+    },
+    "require-dev": {
+    }
+}
