@@ -16,7 +16,7 @@ namespace Halberstadt\Array2XML\Exception;
  */
 class InvalidAttributeException extends \Exception
 {
-  public function __construct(string $message = "", int $code = 0, \Throwable $previous = NULL): \Exception
+  public function __construct(string $message = "", int $code = 0, \Throwable $previous = NULL)
   {
     parent::__construct($message, $code, $previous);
   }

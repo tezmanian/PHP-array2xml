@@ -157,7 +157,7 @@ class Array2XML
    */
   private function _addAttributes(&$node, &$arr): void
   {
-    if (is_array($arr['@attributes']) && array_key_exists('@attributes', $arr))
+    if (array_key_exists('@attributes', $arr) && is_array($arr['@attributes']))
     {
       foreach ($arr['@attributes'] as $key => $value)
       {
@@ -198,9 +198,10 @@ class Array2XML
   {
     foreach ($arr as $key => $value)
     {
+//      var_dump($key, $this->isValidTagName($key));
       if (!$this->isValidTagName($key))
       {
-        throw new InvalidTagException('Illegal character in tag name');
+        throw new InvalidTagException('Illegal character in tag name ' . $key);
       }
       if (is_array($value) && is_numeric(key($value)))
       {
@@ -234,7 +235,7 @@ class Array2XML
    */
   private function isValidTagName($tagName): bool
   {
-    $pattern = '!^[a-z_]+[a-z0-9\:\-\.\_]*[^:]*$!i';
+    $pattern = '!^[a-z_]+[a-z0-9\:\-\.\_]*[^: ]*$!i';
     return preg_match($pattern, $tagName, $matches) && $matches[0] == $tagName;
   }
 
@@ -250,98 +251,3 @@ class Array2XML
 
 }
 
-$books = [
-  'test' => 'abc',
-  'books' =>
-  [
-    '@attributes' =>
-    [
-      'type' => 'fiction'
-    ],
-    'book' =>
-    [
-      [
-        '@attributes' =>
-        [
-          'author' => 'George Orwell'
-        ],
-        'title' => '1984'
-      ],
-      [
-        '@attributes' =>
-        [
-          'author' => 'Isaac Asimov'
-        ],
-        'title' => 'Foundation',
-        'price' => '$15.61'
-      ],
-      [
-        '@attributes' =>
-        [
-          'author' => 'Robert A Heinlein'
-        ],
-        'title' => 'Stranger in a Strange Land',
-        'price' =>
-        [
-          '@attributes' =>
-          [
-            'discount' => '10%'
-          ],
-          '@value' => '$18.00'
-        ]
-      ]
-    ]
-  ]
-];
-/* creates 
-  <books type="fiction">
-  <book author="George Orwell">
-  <title>1984</title>
-  </book>
-  <book author="Isaac Asimov">
-  <title>Foundation</title>
-  <price>$15.61</price>
-  </book>
-  <book author="Robert A Heinlein">
-  <title>Stranger in a Strange Land</title>
-  <price discount="10%">$18.00</price>
-  </book>
-  </books>
- */
-//
-//$xml = Array2XML::createXML('aaaa', $books);
-//
-//Array2XML::appendElementXML($xml, 'book',              [
-//                '@attributes' =>
-//                [
-//                  'author' => 'Isaac Asimov'
-//                ],
-//                'title' => 'Foundation',
-//                'price' => '$15.61'
-//              ]);
-//
-//print $xml->saveXML();
-
-
-$xml = new Array2XML();
-$xml->convertToXML($books);
-$xml->appendElementToNode('book', [
-  '@attributes' =>
-  [
-    'author' => 'Isaac Asimov'
-  ],
-  'title' => 'Foundation',
-  'price' => '$15.61'
-]);
-
-$xml->addElementToNode('books', 'ice', [
-  '@attributes' =>
-  [
-    'author' => 'Isaac Asimov'
-  ],
-  'title' => 'Foundation',
-  'price' => '$15.61'
-]);
-
-print $xml->getXML();
-//$xml->appendElementXML($xml, $nodeNameToAppend, $books)
