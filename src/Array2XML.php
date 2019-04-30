@@ -32,6 +32,7 @@ class Array2XML
    * @var DomDocument|null
    */
   private $xml = null;
+  private $_namespace = [];
 
   public function __construct($version = '1.0', $encoding = 'utf-8', $standalone = false, $formatOutput = true)
   {
@@ -130,10 +131,24 @@ class Array2XML
    */
   private function _convert($nodeName, $arr = []): \DOMElement
   {
-    $xml = $this->xml;
 
-    $node = $xml->createElement($nodeName);
+    $ns = false;
 
+    if (!is_null($arr) && is_array($arr) && array_key_exists('@namespace', $arr))
+    {
+      array_unshift($this->_namespace, $arr['@namespace']['prefix']);
+      $nodeName = sprintf('%s:%s', $this->_namespace[0], $nodeName);
+      $node = $this->xml->createElementNS($arr['@namespace']['uri'], $nodeName);
+      $ns = true;
+      unset($arr['@namespace']);
+    } else
+    {
+      if (!empty($this->_namespace)) {
+        $nodeName = sprintf('%s:%s', $this->_namespace[0], $nodeName);
+      }
+      $node = $this->xml->createElement($nodeName);
+    }
+    
     if (is_array($arr))
     {
       $this->_addAttributes($node, $arr);
@@ -143,7 +158,11 @@ class Array2XML
 
     if (!is_null($arr) && !is_array($arr))
     {
-      $node->appendChild($xml->createTextNode($this->valuesToString($arr)));
+      $node->appendChild($this->xml->createTextNode($this->valuesToString($arr)));
+    }
+    if (!empty($this->_namespace) && $ns == true)
+    {
+      array_shift($this->_namespace);
     }
     return $node;
   }
@@ -244,10 +263,9 @@ class Array2XML
    * 
    * @return string
    */
-  public function getXML() : string
+  public function getXML(): string
   {
     return $this->xml->saveXML();
   }
 
 }
-
