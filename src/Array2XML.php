@@ -34,19 +34,25 @@ class Array2XML
   private $xml = null;
   private $_namespace = [];
 
-  public function __construct($version = '1.0', $encoding = 'utf-8', $standalone = false, $formatOutput = true)
+  private function __construct(string $version = '1.0', string $encoding = 'utf-8', bool $standalone = false, bool $formatOutput = true)
   {
     $this->xml = new \DomDocument($version, $encoding);
     $this->xml->xmlStandalone = $standalone;
     $this->xml->formatOutput = $formatOutput;
   }
 
+  public static function convertToXML(array $arr = [], string $version = '1.0', string $encoding = 'utf-8', bool $standalone = false, bool $formatOutput = true) : Array2XML
+  {
+    $xml = new self($version, $encoding, $standalone, $formatOutput);
+    return $xml->_convertToXML($arr);
+  }
+  
   /**
    * Convert array to XML
    * 
    * @param array $arr
    */
-  public function convertToXML($arr = []): Array2XML
+  private function _convertToXML(array $arr = []): Array2XML
   {
     $xml = $this->xml;
 
@@ -85,7 +91,7 @@ class Array2XML
   {
 
     $element = $this->xml->getElementsByTagName($nodeNameToAdd);
-
+    
     if (is_array($arr))
     {
       $element->item(0)->appendChild($this->_convert($elementName, $arr));
@@ -104,6 +110,7 @@ class Array2XML
   {
 
     $_xpath = new DOMXPath($this->xml);
+
     if (is_array($arr))
     {
       $_xpath->query($xPath)->item(0)->appendChild($this->_convert($elementName, $arr));
@@ -136,19 +143,26 @@ class Array2XML
 
     if (!is_null($arr) && is_array($arr) && array_key_exists('@namespace', $arr))
     {
-      array_unshift($this->_namespace, $arr['@namespace']['prefix']);
-      $nodeName = sprintf('%s:%s', $this->_namespace[0], $nodeName);
+      array_unshift($this->_namespace, $arr['@namespace']);
+      if (!is_array($this->_namespace[0]) ||
+              !array_key_exists('prefix', $this->_namespace[0]) ||
+              !array_key_exists('uri', $this->_namespace[0]))
+      {
+        throw new InvalidAttributeException('Namespace is missing attributes');
+      }
+      $nodeName = sprintf('%s:%s', $this->_namespace[0]['prefix'], $nodeName);
       $node = $this->xml->createElementNS($arr['@namespace']['uri'], $nodeName);
       $ns = true;
       unset($arr['@namespace']);
     } else
     {
-      if (!empty($this->_namespace)) {
-        $nodeName = sprintf('%s:%s', $this->_namespace[0], $nodeName);
+      if (!empty($this->_namespace))
+      {
+        $nodeName = sprintf('%s:%s', $this->_namespace[0]['prefix'], $nodeName);
       }
       $node = $this->xml->createElement($nodeName);
     }
-    
+
     if (is_array($arr))
     {
       $this->_addAttributes($node, $arr);
@@ -217,7 +231,6 @@ class Array2XML
   {
     foreach ($arr as $key => $value)
     {
-//      var_dump($key, $this->isValidTagName($key));
       if (!$this->isValidTagName($key))
       {
         throw new InvalidTagException('Illegal character in tag name ' . $key);
@@ -269,3 +282,89 @@ class Array2XML
   }
 
 }
+
+$two_movies = [
+  'movies' => [
+    'movie' => [
+      [
+        '@namespace' => [
+          'prefix' => 'move',
+          'uri' => 'http://halberstadt.ws/movies',
+        ],
+        'title' => 'Pulp Fiction',
+        'director' => [
+          '@value' => 'Quentin Tarantino',
+          '@attributes' =>
+          [
+            'URI' => 'https://en.wikipedia.org/wiki/Quentin_Tarantino'
+          ],
+        ],
+        'release_date' => '1994',
+        'budget' => '8.5 million USD',
+        'actors' => [
+          'actor' => [
+            [
+              'name' => 'Vincent Vega',
+              'cast' => 'John Travolta'
+            ],
+            [
+              'name' => 'Jules Winnfield',
+              'cast' => 'Samuel L. Jackson'
+            ],
+            [
+              'name' => 'Mia Wallace',
+              'cast' => 'Uma Thurman'
+            ],
+            [
+              'name' => 'Butch Coolidge',
+              'cast' => 'Bruce Willis'
+            ],
+            [
+              'name' => 'Winston Wolf',
+              'cast' => 'Harvey Keitel'
+            ],
+          ],
+        ]
+      ],
+      [
+        '@namespace' => [
+          'prefix' => 'mov',
+          'uri' => 'http://halberstadt.ws/movi',
+        ],
+        'title' => 'Jackie Brown',
+        'director' => [
+          '@value' => 'Quentin Tarantino',
+          '@attributes' =>
+          [
+            'URI' => 'https://en.wikipedia.org/wiki/Quentin_Tarantino'
+          ],
+        ],
+        'release_date' => '1997',
+        'actors' => [
+          'actor' => [
+            [
+              'name' => 'Jacqueline „Jackie“ Brown',
+              'cast' => 'Pam Grier'
+            ],
+            [
+              'name' => 'Ordell Robbie',
+              'cast' => 'Samuel L. Jackson'
+            ],
+          ],
+        ]
+      ],
+    ]
+  ]
+];
+
+
+$a2x = Array2XML::convertToXML($two_movies);
+//var_dump($a2x->getXML());
+$a2x->addElementToNode('move:actors', 'move:actor', [
+              'name' => 'Winston Wolf',
+              'cast' => 'Harvey Keitel'
+            ]);
+
+//$a2x = new Array2XML();
+//$a2x->convertToXML($two_movies);
+//var_Dump($a2x->getXML());
