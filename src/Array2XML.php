@@ -41,6 +41,47 @@ class Array2XML
     $this->xml->formatOutput = $formatOutput;
   }
 
+  /**
+   * Convert array to XML
+   * 
+   * Example:
+   *  [
+   *    'movies' => [
+   *      'movie' => [
+   *        [
+   *          'title' => 'Jackie Brown',
+   *          'director' => [
+   *            '@value' => 'Quentin Tarantino',
+   *            '@attributes' =>
+   *            [
+   *              'URI' => 'https://en.wikipedia.org/wiki/Quentin_Tarantino'
+   *            ],
+   *          ],
+   *          'release date' => '1997',
+   *          'actors' => [
+   *            'actor' => [
+   *              [
+   *                'name' => 'Jacqueline „Jackie“ Brown',
+   *                'cast' => 'Pam Grier'
+   *              ],
+   *              [
+   *                'name' => 'Ordell Robbie',
+   *                'cast' => 'Samuel L. Jackson'
+   *              ],
+   *            ],
+   *          ]
+   *        ]
+   *      ]
+   *    ]
+   *  ]
+   * 
+   * @param array $arr
+   * @param string $version
+   * @param string $encoding
+   * @param bool $standalone
+   * @param bool $formatOutput
+   * @return \Halberstadt\Array2XML\Array2XML
+   */
   public static function convertToXML(array $arr = [], string $version = '1.0', string $encoding = 'utf-8', bool $standalone = false, bool $formatOutput = true) : Array2XML
   {
     $xml = new self($version, $encoding, $standalone, $formatOutput);
