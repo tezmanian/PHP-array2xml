@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Halberstadt Stdlib (https://repo.root-zone.info/PHP/halberstadt-stdlibs)
+ * Halberstadt Array2XML (https://github.com/tezmanian/PHP-array2xml)
  *
- * @copyright Copyright (c) 2018-2018 René Halberstadt
- * @license   https://repo.root-zone.info/PHP/halberstadt-stdlibs
+ * @copyright Copyright (c) 2018-2019 René Halberstadt
+ * @license   https://opensource.org/licenses/Apache-2.0
  */
 
 namespace HalberstadtTest\Array2XML;
@@ -207,19 +207,16 @@ final class Array2XMLTest extends TestCase
 
 MOVIES;
 
-    $_arr2xml = new \Halberstadt\Array2XML\Array2XML();
-    $_arr2xml->convertToXML($two_movies);
-    $_arr2xml->getXML();
-    $this->assertSame($_arr2xml->getXML(), $xmlToCheck);
+    $xml = \Halberstadt\Array2XML\Array2XML::convertToXML($two_movies);
+    $this->assertSame($xml->getXML(), $xmlToCheck);
   }
 
   /**
-   * @expectedException Exception
+   * @expectedException \Halberstadt\Array2XML\Exception\InvalidTagException
    */
   public function testIfInvalidTagException()
-  {
-    $_arr2xml = new \Halberstadt\Array2XML\Array2XML();
-    $_arr2xml->convertToXML([
+  {  
+    $arr = [
       'movies' => [
         'movie' => [
           [
@@ -247,7 +244,8 @@ MOVIES;
           ]
         ]
       ]
-    ]);
+    ];
+    \Halberstadt\Array2XML\Array2XML::convertToXML($arr);
   }
 
 }
