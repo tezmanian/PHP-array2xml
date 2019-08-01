@@ -23,7 +23,7 @@ $arr = [
   ]
 ]
 
-$xml = \Halberstadt\Array2XML\Array2XML::convertToXML();
+$xml = \Halberstadt\Array2XML\Array2XML::convertToXML($arr);
 $xml->getXML()
 
 ```
