@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Halberstadt Array2XML (https://repo.root-zone.info/PHP/halberstadt-array2xml)
+ * Halberstadt Array2XML (https://github.com/tezmanian/PHP-array2xml)
  *
  * @copyright Copyright (c) 2018-2019 René Halberstadt
  * @license   https://opensource.org/licenses/Apache-2.0

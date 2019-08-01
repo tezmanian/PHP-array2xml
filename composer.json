@@ -1,6 +1,6 @@
 {
     "name": "halberstadt.info/array2xml",
-    "description": "Description of project Array2XML.",
+    "description": "Little library to convert an array to XML.",
     "authors": [
         {
             "name": "René Halberstadt",
