@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Halberstadt Array2XML (https://repo.root-zone.info/PHP/halberstadt-array2xml)
+ * Halberstadt Array2XML (https://github.com/tezmanian/PHP-array2xml)
  *
  * @copyright Copyright (c) 2018-2019 René Halberstadt
  * @license   https://opensource.org/licenses/Apache-2.0
@@ -323,89 +323,3 @@ class Array2XML
   }
 
 }
-
-$two_movies = [
-  'movies' => [
-    'movie' => [
-      [
-        '@namespace' => [
-          'prefix' => 'move',
-          'uri' => 'http://halberstadt.ws/movies',
-        ],
-        'title' => 'Pulp Fiction',
-        'director' => [
-          '@value' => 'Quentin Tarantino',
-          '@attributes' =>
-          [
-            'URI' => 'https://en.wikipedia.org/wiki/Quentin_Tarantino'
-          ],
-        ],
-        'release_date' => '1994',
-        'budget' => '8.5 million USD',
-        'actors' => [
-          'actor' => [
-            [
-              'name' => 'Vincent Vega',
-              'cast' => 'John Travolta'
-            ],
-            [
-              'name' => 'Jules Winnfield',
-              'cast' => 'Samuel L. Jackson'
-            ],
-            [
-              'name' => 'Mia Wallace',
-              'cast' => 'Uma Thurman'
-            ],
-            [
-              'name' => 'Butch Coolidge',
-              'cast' => 'Bruce Willis'
-            ],
-            [
-              'name' => 'Winston Wolf',
-              'cast' => 'Harvey Keitel'
-            ],
-          ],
-        ]
-      ],
-      [
-        '@namespace' => [
-          'prefix' => 'mov',
-          'uri' => 'http://halberstadt.ws/movi',
-        ],
-        'title' => 'Jackie Brown',
-        'director' => [
-          '@value' => 'Quentin Tarantino',
-          '@attributes' =>
-          [
-            'URI' => 'https://en.wikipedia.org/wiki/Quentin_Tarantino'
-          ],
-        ],
-        'release_date' => '1997',
-        'actors' => [
-          'actor' => [
-            [
-              'name' => 'Jacqueline „Jackie“ Brown',
-              'cast' => 'Pam Grier'
-            ],
-            [
-              'name' => 'Ordell Robbie',
-              'cast' => 'Samuel L. Jackson'
-            ],
-          ],
-        ]
-      ],
-    ]
-  ]
-];
-
-
-$a2x = Array2XML::convertToXML($two_movies);
-//var_dump($a2x->getXML());
-$a2x->addElementToNode('move:actors', 'move:actor', [
-              'name' => 'Winston Wolf',
-              'cast' => 'Harvey Keitel'
-            ]);
-
-//$a2x = new Array2XML();
-//$a2x->convertToXML($two_movies);
-//var_Dump($a2x->getXML());
