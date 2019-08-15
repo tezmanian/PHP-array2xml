@@ -1,23 +1,26 @@
 <?php
 
 /**
- * Halberstadt Array2XML (https://github.com/tezmanian/PHP-array2xml)
+ * Array2XML (https://github.com/tezmanian/PHP-array2xml)
  *
  * @copyright Copyright (c) 2018-2019 René Halberstadt
  * @license   https://opensource.org/licenses/Apache-2.0
  */
 
-namespace Halberstadt\Array2XML\Exception;
+namespace Tez\Array2XML\Exception;
+
+use Exception;
+use Throwable;
 
 /**
- * Description of InvalidAttributeException
+ * Exception thrown if the attribute is invalid
  *
  * @author halberstadt
  */
-class InvalidAttributeException extends \Exception
+class InvalidAttributeException extends Exception
 {
-  public function __construct(string $message = "", int $code = 0, \Throwable $previous = NULL)
-  {
-    parent::__construct($message, $code, $previous);
-  }
+    public function __construct(string $message = "", int $code = 0, Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
 }

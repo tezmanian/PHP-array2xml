@@ -1,6 +1,6 @@
-# halberstadt-array2xml
+# array2xml
 
-A little method I needed to convert an array easy to yml.
+A little class I created to convert an array easy to yml.
 
 #### Usage
 
@@ -23,7 +23,7 @@ $arr = [
   ]
 ]
 
-$xml = \Halberstadt\Array2XML\Array2XML::convertToXML($arr);
+$xml = \Tez\Array2XML\Array2XML::convertToXML($arr);
 $xml->getXML()
 
 ```

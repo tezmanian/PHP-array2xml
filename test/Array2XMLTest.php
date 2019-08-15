@@ -1,89 +1,92 @@
 <?php
 
 /**
- * Halberstadt Array2XML (https://github.com/tezmanian/PHP-array2xml)
+ * Array2XML (https://github.com/tezmanian/PHP-array2xml)
  *
  * @copyright Copyright (c) 2018-2019 René Halberstadt
  * @license   https://opensource.org/licenses/Apache-2.0
  */
 
-namespace HalberstadtTest\Array2XML;
+namespace TezTest\Array2XML;
 
 use PHPUnit\Framework\TestCase;
+use Tez\Array2XML\Array2XML;
+use Tez\Array2XML\Exception\InvalidAttributeException;
+use Tez\Array2XML\Exception\InvalidTagException;
 
 final class Array2XMLTest extends TestCase
 {
 
-  public function testIfIsRightXML()
-  {
+    public function testIfIsRightXML()
+    {
 
-    $two_movies = [
-      'movies' => [
-        'movie' => [
-          [
-            'title' => 'Pulp Fiction',
-            'director' => [
-              '@value' => 'Quentin Tarantino',
-              '@attributes' =>
-              [
-                'URI' => 'https://en.wikipedia.org/wiki/Quentin_Tarantino'
-              ],
-            ],
-            'release_date' => '1994',
-            'budget' => '8.5 million USD',
-            'actors' => [
-              'actor' => [
-                [
-                  'name' => 'Vincent Vega',
-                  'cast' => 'John Travolta'
-                ],
-                [
-                  'name' => 'Jules Winnfield',
-                  'cast' => 'Samuel L. Jackson'
-                ],
-                [
-                  'name' => 'Mia Wallace',
-                  'cast' => 'Uma Thurman'
-                ],
-                [
-                  'name' => 'Butch Coolidge',
-                  'cast' => 'Bruce Willis'
-                ],
-                [
-                  'name' => 'Winston Wolf',
-                  'cast' => 'Harvey Keitel'
-                ],
-              ],
+        $two_movies = [
+            'movies' => [
+                'movie' => [
+                    [
+                        'title' => 'Pulp Fiction',
+                        'director' => [
+                            '@value' => 'Quentin Tarantino',
+                            '@attributes' =>
+                                [
+                                    'URI' => 'https://en.wikipedia.org/wiki/Quentin_Tarantino'
+                                ],
+                        ],
+                        'release_date' => '1994',
+                        'budget' => '8.5 million USD',
+                        'actors' => [
+                            'actor' => [
+                                [
+                                    'name' => 'Vincent Vega',
+                                    'cast' => 'John Travolta'
+                                ],
+                                [
+                                    'name' => 'Jules Winnfield',
+                                    'cast' => 'Samuel L. Jackson'
+                                ],
+                                [
+                                    'name' => 'Mia Wallace',
+                                    'cast' => 'Uma Thurman'
+                                ],
+                                [
+                                    'name' => 'Butch Coolidge',
+                                    'cast' => 'Bruce Willis'
+                                ],
+                                [
+                                    'name' => 'Winston Wolf',
+                                    'cast' => 'Harvey Keitel'
+                                ],
+                            ],
+                        ]
+                    ],
+                    [
+                        'title' => 'Jackie Brown',
+                        'director' => [
+                            '@value' => 'Quentin Tarantino',
+                            '@attributes' =>
+                                [
+                                    'URI' => 'https://en.wikipedia.org/wiki/Quentin_Tarantino'
+                                ],
+                        ],
+                        'release_date' => '1997',
+                        'actors' => [
+                            'actor' => [
+                                [
+                                    'name' => 'Jacqueline „Jackie“ Brown',
+                                    'cast' => 'Pam Grier'
+                                ],
+                                [
+                                    'name' => 'Ordell Robbie',
+                                    'cast' => 'Samuel L. Jackson'
+                                ],
+                            ],
+                        ]
+                    ],
+                ]
             ]
-          ],
-          [
-            'title' => 'Jackie Brown',
-            'director' => [
-              '@value' => 'Quentin Tarantino',
-              '@attributes' =>
-              [
-                'URI' => 'https://en.wikipedia.org/wiki/Quentin_Tarantino'
-              ],
-            ],
-            'release_date' => '1997',
-            'actors' => [
-              'actor' => [
-                [
-                  'name' => 'Jacqueline „Jackie“ Brown',
-                  'cast' => 'Pam Grier'
-                ],
-                [
-                  'name' => 'Ordell Robbie',
-                  'cast' => 'Samuel L. Jackson'
-                ],
-              ],
-            ]
-          ],
-        ]
-      ]
-    ];
+        ];
 
-    $xmlToCheck = <<< MOVIES
+        $xmlToCheck = <<< MOVIES
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <movies>
   <movie>
@@ -133,45 +136,56 @@ final class Array2XMLTest extends TestCase
 
 MOVIES;
 
-    $xml = \Halberstadt\Array2XML\Array2XML::convertToXML($two_movies);
-    $this->assertSame($xml->getXML(), $xmlToCheck);
-  }
+        try
+        {
+            $xml = Array2XML::convertToXML($two_movies);
+            $this->assertSame($xml->getXML(), $xmlToCheck);
+        } catch (InvalidAttributeException $e)
+        {
+            $this->assertFalse(true,"InvaildAttributeException");
+        } catch (InvalidTagException $e)
+        {
+            $this->assertFalse(true,"InvaildTagException");
+        }
 
-  /**
-   * @expectedException \Halberstadt\Array2XML\Exception\InvalidTagException
-   */
-  public function testIfInvalidTagException()
-  {  
-    $arr = [
-      'movies' => [
-        'movie' => [
-          [
-            'title' => 'Jackie Brown',
-            'director' => [
-              '@value' => 'Quentin Tarantino',
-              '@attributes' =>
-              [
-                'URI' => 'https://en.wikipedia.org/wiki/Quentin_Tarantino'
-              ],
-            ],
-            'release date' => '1997',
-            'actors' => [
-              'actor' => [
-                [
-                  'name' => 'Jacqueline „Jackie“ Brown',
-                  'cast' => 'Pam Grier'
-                ],
-                [
-                  'name' => 'Ordell Robbie',
-                  'cast' => 'Samuel L. Jackson'
-                ],
-              ],
+    }
+
+    /**
+     * @expectedException \Tez\Array2XML\Exception\InvalidTagException
+     * @throws InvalidAttributeException
+     */
+    public function testIfInvalidTagException()
+    {
+        $arr = [
+            'movies' => [
+                'movie' => [
+                    [
+                        'title' => 'Jackie Brown',
+                        'director' => [
+                            '@value' => 'Quentin Tarantino',
+                            '@attributes' =>
+                                [
+                                    'URI' => 'https://en.wikipedia.org/wiki/Quentin_Tarantino'
+                                ],
+                        ],
+                        'release date' => '1997',
+                        'actors' => [
+                            'actor' => [
+                                [
+                                    'name' => 'Jacqueline „Jackie“ Brown',
+                                    'cast' => 'Pam Grier'
+                                ],
+                                [
+                                    'name' => 'Ordell Robbie',
+                                    'cast' => 'Samuel L. Jackson'
+                                ],
+                            ],
+                        ]
+                    ]
+                ]
             ]
-          ]
-        ]
-      ]
-    ];
-    \Halberstadt\Array2XML\Array2XML::convertToXML($arr);
-  }
+        ];
+        Array2XML::convertToXML($arr);
+    }
 
 }
